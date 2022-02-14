@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Paper, Grid, Typography, List, makeStyles, RadioGroup, FormControlLabel, Radio, Divider, Checkbox} from '@material-ui/core/';
-import Item from '../components/Item';
+import { Grid, makeStyles, OutlinedInput, InputAdornment, Icon, InputLabel, Select, MenuItem, FormControl } from '@material-ui/core/';
 import Card from '../components/Card';
 
 
@@ -14,29 +13,20 @@ const useStyles = makeStyles((theme) => ({
         padding: theme.spacing(2),
         textAlign: 'center'
     },
+    options: {
+        padding: "16px"
+    }
 }));
 
 const HomePage = () => {
     const products = useSelector(state => state.products)
     const [filteredProducts, setFilteredProducts] = React.useState(products)
+    const [order, setOrder] = React.useState("asc")
     const classes = useStyles();
 
     const handleProductsSearch = (event) => {
         const search = event.target.value.toLocaleLowerCase()
         setFilteredProducts(products.filter((product) => product.name_product.toLocaleLowerCase().includes(search)))
-    }
-
-    const handlePriceFilter = (event, filter) => {
-        if (filter === "cheap") {
-            if (event.target.checked) {
-                setFilteredProducts(filteredProducts.filter((product) => product.price <= 300)) 
-            }
-        else {
-            setFilteredProducts(filteredProducts.filter((product) => product.price <= 300)) 
-            }
-        
-        }
-        
     }
 
     const categorys = products.map(
@@ -63,55 +53,45 @@ const HomePage = () => {
             count[key] = (count[key] ? count[key] + 1 : 1)
         }
     }
-    console.log(products)
+
+    React.useEffect(() => {
+        console.log(order)
+    }, [order])
 
     return (
         <Grid container spacing={3} className={classes.root}>
-            <Grid item xs={3}>
-                <Paper className={classes.paper}>
-                    <Typography variant='h5'>
-                        Filtro
-                    </Typography>
-                    <Grid>
-                        <Typography variant='h6'>
-                            Preço
-                        </Typography>
-                        <FormControlLabel control={<Checkbox defaultChecked onChange={(event) => {handlePriceFilter(event, "cheap")}}/>} label="R$ 100 - R$ 300"/>
-                        <FormControlLabel control={<Checkbox defaultChecked onChange={(event) => {handlePriceFilter(event, "expensive")}}/>} label="R$ 300 - R$ 450"/>
-                        <Divider/>
-                        <Typography variant='h6'>
-                            Categorias
-                        </Typography>
-                        {category.map(
-                            category => {
-                                return ( 
-                                <div>
-                                    <FormControlLabel control={<Checkbox defaultChecked />} label={category.name} />
-                                </div>
-                                )
+            <Grid xs={1}></Grid>
+            <Grid container xs={10} spacing={3} className={classes.root}>
+                <Grid container xs={12} className={classes.options}>
+                    <Grid xs={4}>
+                        <OutlinedInput
+                            id="outlined-adornment-password"
+                            onInput={handleProductsSearch}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <Icon>search</Icon>
+                                </InputAdornment>
                             }
-                        )}
-                        
-  
+                            label="Password"
+                        />
                     </Grid>
-                    {/* <List>
-                        {category.map(
-                            category => {
-                                return (
-                                    <Item
-                                        key = {category.id} 
-                                        name= {category.name}
-                                        details={count[category.name]}
-                                    />
-                                )
-                            }
-                        )}
-                    </List> */}
-                </Paper>
-            </Grid>
-            <Grid container xs={9} spacing={3} className={classes.root}>
-                <Grid xs={12}>
-                    <input type="text" style={{ width: "100%" }} onInput={handleProductsSearch} />
+                    <Grid xs={4}>
+                        <FormControl variant="outlined" >
+                            <InputLabel id="demo-simple-select-outlined-label">Ordenação</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-outlined-label"
+                                id="demo-simple-select-outlined"
+                                value={order}
+                                label="Ordenação"
+                            >
+                                <MenuItem value="">
+                                    <em>None</em>
+                                </MenuItem>
+                                <MenuItem value={"asc"}>Menor Preço</MenuItem>
+                                <MenuItem value={"desc"}>Maior Preço</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
                 </Grid>
                 {filteredProducts.map(item => {
                     return (
