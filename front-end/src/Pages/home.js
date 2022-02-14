@@ -29,6 +29,19 @@ const HomePage = () => {
         setFilteredProducts(products.filter((product) => product.name_product.toLocaleLowerCase().includes(search)))
     }
 
+    const handleOrderChange = (event) => {
+       setOrder(event.target.value)
+       if(event.target.value === "asc") {
+           setFilteredProducts(filteredProducts.sort((a,b) => {
+               return a.price < b.price ? -1 : a.price > b.price ? 1 : 0
+           }))
+       } else if(event.target.value === "desc") {
+        setFilteredProducts(filteredProducts.sort((a,b) => {
+            return a.price > b.price ? -1 : a.price < b.price ? 1 : 0
+        }))
+    }
+    }
+
     const categorys = products.map(
         category => {
             const container = {};
@@ -53,10 +66,6 @@ const HomePage = () => {
             count[key] = (count[key] ? count[key] + 1 : 1)
         }
     }
-
-    React.useEffect(() => {
-        console.log(order)
-    }, [order])
 
     return (
         <Grid container spacing={3} className={classes.root}>
@@ -83,10 +92,8 @@ const HomePage = () => {
                                 id="demo-simple-select-outlined"
                                 value={order}
                                 label="Ordenação"
+                                onChange={handleOrderChange}
                             >
-                                <MenuItem value="">
-                                    <em>None</em>
-                                </MenuItem>
                                 <MenuItem value={"asc"}>Menor Preço</MenuItem>
                                 <MenuItem value={"desc"}>Maior Preço</MenuItem>
                             </Select>
